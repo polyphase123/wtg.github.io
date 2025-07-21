@@ -18,6 +18,7 @@
             --text-shadow-color: rgba(51, 255, 51, 0.4);
             --scanline-color: rgba(0, 0, 0, 0.3);
             --bezel-color: #2c2c2c;
+            --warning-color: #ffcc00;
         }
 
         html, body {
@@ -38,8 +39,8 @@
 
         .monitor {
             width: 95%;
-            max-width: 1000px; /* Increased max-width */
-            height: 95vh; /* Increased height */
+            max-width: 1000px;
+            height: 95vh;
             background: var(--monitor-bg);
             border: 20px solid var(--bezel-color);
             border-radius: 25px;
@@ -77,10 +78,9 @@
             width: 100%;
             height: 100%;
             text-shadow: 0 0 5px var(--text-shadow-color);
-            font-size: 1.4rem; /* Adjusted font size */
-            line-height: 1.5rem; /* Adjusted line height */
+            font-size: 1.4rem;
+            line-height: 1.5rem;
             overflow-y: auto;
-            /* Custom scrollbar for the retro feel */
             scrollbar-width: thin;
             scrollbar-color: var(--text-color) var(--monitor-bg);
         }
@@ -97,7 +97,6 @@
             border: 2px solid var(--monitor-bg);
         }
 
-        /* Boot-up sequence styling */
         #boot-sequence {
             white-space: pre-wrap;
         }
@@ -120,7 +119,6 @@
             50% { background: var(--text-color); }
         }
 
-        /* Main application UI styles */
         .app-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -135,7 +133,7 @@
 
         .input-group label {
             display: block;
-            margin-bottom: 8px; /* Adjusted margin */
+            margin-bottom: 8px;
         }
 
         .input-group input, .input-group select, .input-group .slider-container {
@@ -145,9 +143,9 @@
             border-bottom: 2px solid var(--text-color);
             color: var(--text-color);
             font-family: 'VT323', monospace;
-            font-size: 1.4rem; /* Adjusted font size */
+            font-size: 1.4rem;
             padding: 5px;
-            margin-bottom: 12px; /* Adjusted margin */
+            margin-bottom: 12px;
             text-shadow: 0 0 5px var(--text-shadow-color);
         }
 
@@ -157,15 +155,19 @@
 
         .input-group input:focus, .input-group select:focus {
             outline: none;
-            border-bottom-color: #ffcc00;
+            border-bottom-color: var(--warning-color);
         }
         
-        .input-group input:disabled {
+        .input-group input:disabled, .input-group select:disabled, .input-group .slider:disabled {
             color: rgba(51, 255, 51, 0.5);
             border-bottom-style: dashed;
+            cursor: not-allowed;
+        }
+        .slider:disabled::-webkit-slider-thumb {
+            background: rgba(51, 255, 51, 0.5);
         }
 
-        /* Slider styles */
+
         .slider {
             -webkit-appearance: none;
             width: 100%;
@@ -200,7 +202,7 @@
             border: none;
             padding: 10px 20px;
             font-family: 'VT323', monospace;
-            font-size: 1.4rem; /* Adjusted font size */
+            font-size: 1.4rem;
             cursor: pointer;
             margin-top: 10px;
             display: block;
@@ -219,13 +221,20 @@
             margin-top: 0;
         }
         #power-output {
-            font-size: 2.2rem; /* Adjusted font size */
-            color: #ffcc00;
+            font-size: 2.2rem;
+            color: var(--warning-color);
             text-shadow: 0 0 8px rgba(255, 204, 0, 0.7);
             word-wrap: break-word;
+            min-height: 2.5rem;
+        }
+        
+        #turbine-op-status {
+            margin-top: 10px;
+            font-size: 1.2rem;
+            color: var(--warning-color);
+            min-height: 1.5rem;
         }
 
-        /* Turbine animation styles */
         .turbine-visual {
             width: 100px;
             height: 100px;
@@ -247,10 +256,18 @@
             position: absolute;
             top: -20px;
             left: 0;
-            animation-duration: 5s; /* Default speed */
+            animation-name: none;
             animation-timing-function: linear;
             animation-iteration-count: infinite;
         }
+        .turbine-blades.spinning {
+             animation-name: spin;
+        }
+        .turbine-blades.feathered .blade {
+            transform: rotate(90deg) scaleY(1.2); /* Makes blades look 'turned' */
+            background-color: var(--warning-color);
+        }
+
         .blade {
             position: absolute;
             width: 10px;
@@ -259,6 +276,7 @@
             left: 45px;
             top: 5px;
             transform-origin: 50% 100%;
+            transition: background-color 0.5s, transform 0.5s;
         }
         .blade.b1 { transform: rotate(0deg); }
         .blade.b2 { transform: rotate(120deg); }
@@ -276,7 +294,6 @@
             margin-top: 20px;
         }
 
-        /* Responsive adjustments for smaller screens */
         @media (max-width: 768px) {
             .app-grid {
                 grid-template-columns: 1fr;
@@ -308,12 +325,10 @@
     <div class="monitor">
         <div class="content" id="content-area">
             
-            <!-- Boot-up sequence will be injected here by JS -->
             <div id="boot-sequence"></div>
 
-            <!-- Main application UI, initially hidden -->
             <div id="app-ui" class="hidden">
-                <p>> WTG POWER COMPUTATION INTERFACE v2.5</p>
+                <p>> WTG POWER COMPUTATION INTERFACE v2.7</p>
                 <p>> READY.</p>
                 <div class="app-grid">
                     <div class="input-group">
@@ -327,36 +342,76 @@
                         
                         <label for="rotor-model-select">ROTOR MODEL:</label>
                         <select id="rotor-model-select">
-                            <optgroup label="-- Vestas --">
-                                <option value="7854">Vestas V100 (2.75MW)</option>
+                            <optgroup label="-- Vestas (Denmark) --">
+                                <option value="9852">Vestas V112 (3.45MW)</option>
+                                <option value="14527">Vestas V136 (4.2MW)</option>
                                 <option value="17671">Vestas V150 (4.2MW)</option>
-                                <option value="23235">Vestas V172 (7.2MW)</option>
+                                <option value="20106">Vestas V162 (6.2MW)</option>
+                                <option value="43743">Vestas V236 (15.0MW Offshore)</option>
                             </optgroup>
-                            <optgroup label="-- Siemens Gamesa --">
+                            <optgroup label="-- Siemens Gamesa (Spain/Germany) --">
+                                <option value="12469">SGRE SG 4.5-125</option>
+                                <option value="16513">SGRE SG 5.8-145</option>
                                 <option value="18869">SGRE SG 6.6-155</option>
+                                <option value="22698">SGRE SG 8.0-170</option>
                                 <option value="38707">SGRE SG 14-222 (Offshore)</option>
                                 <option value="43743">SGRE SG 14-236 (Offshore)</option>
+                                <option value="6424">Gamesa G90 (2.0MW)</option>
+                            </optgroup>
+                             <optgroup label="-- GE Vernova (USA) --">
+                                <option value="12868">GE 4.8-129</option>
+                                <option value="19607">GE Cypress 5.5-158</option>
+                                <option value="57226">GE Haliade-X 14.7-250 (Offshore)</option>
                             </optgroup>
                             <optgroup label="-- Goldwind (China) --">
                                 <option value="5320">Goldwind GW82 (1.5MW)</option>
+                                <option value="14314">Goldwind GW136 (3.4MW)</option>
                                 <option value="21382">Goldwind GW165 (6.0MW)</option>
                                 <option value="24053">Goldwind GW175 (8.0MW)</option>
+                            </optgroup>
+                            <optgroup label="-- Nordex (Germany) --">
+                                <option value="13069">Nordex N131 (3.9MW)</option>
+                                <option value="17460">Nordex N149 (5.X MW)</option>
+                                <option value="21124">Nordex N163 (6.X MW)</option>
+                            </optgroup>
+                             <optgroup label="-- Enercon (Germany) --">
+                                <option value="7543">Enercon E-101 (3.05MW)</option>
+                                <option value="12668">Enercon E-126 (7.58MW)</option>
+                                <option value="14957">Enercon E-138 (4.2MW)</option>
+                                <option value="20358">Enercon E-160 (5.5MW)</option>
+                            </optgroup>
+                            <optgroup label="-- Envision (China) --">
+                                <option value="18146">Envision EN156 (4.5MW)</option>
+                                <option value="23235">Envision EN171 (6.5MW)</option>
+                            </optgroup>
+                            <optgroup label="-- Mingyang Smart Energy (China) --">
+                                <option value="22902">Mingyang MySE 7.25-171</option>
+                                <option value="45239">Mingyang MySE 14-236 (Offshore)</option>
+                                <option value="53093">Mingyang MySE 16-260 (Offshore)</option>
+                            </optgroup>
+                            <optgroup label="-- Other Notable Manufacturers --">
+                                <option value="21642">Shanghai Electric SEW11.0-208</option>
+                                <option value="11690">Suzlon S120 (2.1MW)</option>
+                                <option value="20096">Windey WD160 (5.0MW)</option>
+                                <option value="22698">Sany SE-17260 (6.0MW)</option>
+                                <option value="36305">CSSC Haizhuang H210 (10MW)</option>
+                                <option value="18629">United Power UP5500-155</option>
                             </optgroup>
                             <option value="custom">-- Custom Area --</option>
                         </select>
 
                         <label for="rotor-area">ROTOR AREA (A, m²):</label>
-                        <input type="number" id="rotor-area" value="7854">
+                        <input type="number" id="rotor-area" value="9852">
 
                         <label for="wind-speed">WIND SPEED (v, m/s):</label>
-                        <input type="number" id="wind-speed" value="12">
+                        <input type="number" id="wind-speed" value="12" step="0.5">
                         
                         <label for="power-coeff">POWER COEFF (Cp): <span id="cp-value">0.45</span><br>(Typical: 0.35-0.50)</label>
                         <div class="slider-container">
                              <input type="range" min="0" max="0.593" value="0.45" step="0.001" class="slider" id="power-coeff">
                         </div>
 
-                        <button class="compute-button" id="compute-btn">COMPUTE POWER</button>
+                        <button class="compute-button" id="compute-btn">UPDATE SYSTEM</button>
                     </div>
 
                     <div class="output-container">
@@ -364,6 +419,8 @@
                             <h3>// SYSTEM OUTPUT</h3>
                             <p>> POWER (P):</p>
                             <div id="power-output">_</div>
+                            <p>> STATUS:</p>
+                            <div id="turbine-op-status">Awaiting input...</div>
                         </div>
                         <div class="turbine-visual-group">
                              <h3>// TURBINE STATUS</h3>
@@ -401,6 +458,12 @@
             const computeBtn = document.getElementById('compute-btn');
             const powerOutputEl = document.getElementById('power-output');
             const turbineBladesEl = document.getElementById('turbine-blades');
+            const opStatusEl = document.getElementById('turbine-op-status');
+
+            // --- Constants for Turbine Operation ---
+            const CUT_IN_SPEED = 3.5; // m/s
+            const RATED_SPEED = 14.0; // m/s
+            const CUT_OUT_SPEED = 25.0; // m/s
 
             // --- Boot Sequence Logic ---
             const bootLines = [
@@ -409,7 +472,7 @@
                 'CPU: ZILOG Z80 @ 4MHz... OK',
                 'LOADING WTG_DOS.SYS...',
                 'SYSTEM READY.',
-                'LOADING POWER CONSOLE v2.5...',
+                'LOADING POWER CONSOLE v2.7...',
                 ''
             ];
 
@@ -420,11 +483,7 @@
                     const line = bootLines[lineIndex];
                     let charIndex = 0;
                     const p = document.createElement('p');
-                    if (lineIndex === 0) {
-                        p.innerHTML = '<span class="cursor"></span>';
-                    }
                     bootSequenceEl.appendChild(p);
-
                     const typingInterval = setInterval(() => {
                         if (charIndex < line.length) {
                             p.innerHTML = line.substring(0, charIndex + 1) + '<span class="cursor"></span>';
@@ -432,45 +491,33 @@
                             contentArea.scrollTop = contentArea.scrollHeight;
                         } else {
                             clearInterval(typingInterval);
-                            p.innerHTML = line; // Remove cursor at end of line
+                            p.innerHTML = line;
                             lineIndex++;
-                            setTimeout(typeBootLine, Math.random() * 200 + 50);
+                            setTimeout(typeBootLine, Math.random() * 150 + 50);
                         }
-                    }, 30);
+                    }, 25);
                 } else {
-                    // Boot sequence finished, show the main app
                     setTimeout(() => {
                         bootSequenceEl.classList.add('hidden');
                         appUiEl.classList.remove('hidden');
                         initializeInputs();
-                        startTurbineAnimation(parseFloat(windSpeedInput.value) || 0);
+                        updateSystemState(); 
                     }, 500);
                 }
             }
 
-            // Start the boot sequence
             typeBootLine();
-
 
             // --- Application Logic ---
             
-            /**
-             * Initializes the state of the inputs based on default values.
-             */
             function initializeInputs() {
                 handleAltitudeChange();
                 handleRotorModelChange();
             }
 
-            /**
-             * Updates air density based on altitude.
-             * Uses a simplified formula from the U.S. Standard Atmosphere model.
-             */
             function handleAltitudeChange() {
                 const h = parseFloat(altitudeInput.value);
-
                 if (!isNaN(h) && altitudeInput.value.trim() !== '') {
-                    // Simplified barometric formula for density calculation
                     const density = 1.225 * Math.pow((1 - 0.0000225577 * h), 5.25588);
                     airDensityInput.value = density.toFixed(4);
                     airDensityInput.disabled = true;
@@ -479,13 +526,9 @@
                 }
             }
 
-            /**
-             * Handles changes to the rotor model selection dropdown.
-             */
             function handleRotorModelChange() {
                 const selectedValue = rotorModelSelect.value;
                 if (selectedValue === 'custom') {
-                    rotorAreaInput.value = '';
                     rotorAreaInput.disabled = false;
                     rotorAreaInput.focus();
                 } else {
@@ -496,88 +539,107 @@
             
             altitudeInput.addEventListener('input', handleAltitudeChange);
             rotorModelSelect.addEventListener('change', handleRotorModelChange);
-
-            /**
-             * Updates the displayed value for the Power Coefficient slider.
-             */
             powerCoeffSlider.addEventListener('input', () => {
                 cpValueSpan.textContent = parseFloat(powerCoeffSlider.value).toFixed(3);
             });
+            computeBtn.addEventListener('click', updateSystemState);
+            windSpeedInput.addEventListener('input', updateSystemState);
 
             /**
-             * Handles the main power calculation when the button is clicked.
+             * Main function to calculate power and update the entire UI based on wind speed.
              */
-            computeBtn.addEventListener('click', () => {
-                // 1. Get values from inputs
-                const rho = parseFloat(airDensityInput.value); // Air Density (ρ)
-                const A = parseFloat(rotorAreaInput.value);     // Rotor Area (A)
-                const v = parseFloat(windSpeedInput.value);     // Wind Speed (v)
-                const Cp = parseFloat(powerCoeffSlider.value); // Power Coefficient (Cp)
+            function updateSystemState() {
+                const rho = parseFloat(airDensityInput.value);
+                const A = parseFloat(rotorAreaInput.value);
+                const v = parseFloat(windSpeedInput.value);
+                const Cp = parseFloat(powerCoeffSlider.value);
 
-                // 2. Validate inputs
                 if (isNaN(rho) || isNaN(A) || isNaN(v) || isNaN(Cp) || rho <= 0 || A <= 0 || v < 0) {
-                    typeOutput('INVALID INPUT. CHECK PARAMETERS.');
+                    typeOutput(powerOutputEl, 'ERROR');
+                    typeOutput(opStatusEl, 'INVALID INPUTS');
                     return;
                 }
-                
-                // 3. Calculate power using the formula: P = 0.5 * ρ * A * v^3 * Cp
-                const powerInWatts = 0.5 * rho * A * Math.pow(v, 3) * Cp;
-                
-                // 4. Format and display the output
-                let outputString;
-                if (powerInWatts >= 1000000) {
-                    const powerInMegawatts = powerInWatts / 1000000;
+
+                // State 1: Wind speed is below cut-in
+                if (v < CUT_IN_SPEED) {
+                    powerCoeffSlider.disabled = false;
+                    typeOutput(powerOutputEl, '0.00 kW');
+                    typeOutput(opStatusEl, 'IDLE: BELOW CUT-IN SPEED');
+                    setTurbineAnimation('stopped');
+                } 
+                // State 2: Normal operation
+                else if (v >= CUT_IN_SPEED && v < RATED_SPEED) {
+                    powerCoeffSlider.disabled = false;
+                    const powerInWatts = 0.5 * rho * A * Math.pow(v, 3) * Cp;
+                    displayFormattedPower(powerInWatts);
+                    typeOutput(opStatusEl, 'OPERATING NORMALLY');
+                    setTurbineAnimation('spinning', v);
+                }
+                // State 3: Rated power operation (blade pitching)
+                else if (v >= RATED_SPEED && v <= CUT_OUT_SPEED) {
+                    powerCoeffSlider.disabled = true;
+                    // Power is capped at the level of the RATED_SPEED
+                    const ratedPowerInWatts = 0.5 * rho * A * Math.pow(RATED_SPEED, 3) * Cp;
+                    displayFormattedPower(ratedPowerInWatts);
+                    typeOutput(opStatusEl, 'REGULATING POWER (PITCHING)');
+                    // Spin at a constant high speed
+                    setTurbineAnimation('spinning', RATED_SPEED);
+                }
+                // State 4: Wind speed exceeds cut-out
+                else { // v > CUT_OUT_SPEED
+                    powerCoeffSlider.disabled = true;
+                    typeOutput(powerOutputEl, '0.00 kW');
+                    typeOutput(opStatusEl, 'SHUTDOWN: HIGH WIND SPEED');
+                    setTurbineAnimation('feathered');
+                }
+            }
+            
+            function displayFormattedPower(watts) {
+                 let outputString;
+                if (watts >= 1000000) {
+                    const powerInMegawatts = watts / 1000000;
                     outputString = `${powerInMegawatts.toFixed(2)} MW`;
                 } else {
-                    const powerInKilowatts = powerInWatts / 1000;
+                    const powerInKilowatts = watts / 1000;
                     outputString = `${powerInKilowatts.toFixed(2)} kW`;
                 }
-                
-                typeOutput(outputString);
-
-                // 5. Update turbine animation speed based on wind speed
-                startTurbineAnimation(v);
-            });
-
-            /**
-             * Simulates typing for the output display.
-             * @param {string} text - The text to be typed out.
-             */
-            function typeOutput(text) {
-                let charIndex = 0;
-                powerOutputEl.innerHTML = ''; // Clear previous output
-                const typingInterval = setInterval(() => {
-                    if (charIndex < text.length) {
-                        powerOutputEl.innerHTML = text.substring(0, charIndex + 1) + '<span class="cursor"></span>';
-                        charIndex++;
-                    } else {
-                        clearInterval(typingInterval);
-                        powerOutputEl.innerHTML = text; // Remove cursor at end
-                    }
-                }, 50);
+                typeOutput(powerOutputEl, outputString);
             }
 
             /**
-             * Starts or adjusts the turbine blade animation.
-             * @param {number} windSpeed - The current wind speed in m/s.
+             * Simulates typing for a given element.
              */
-            function startTurbineAnimation(windSpeed) {
-                turbineBladesEl.style.animationName = 'spin';
-                if (windSpeed <= 0) {
-                    turbineBladesEl.style.animationPlayState = 'paused';
-                } else {
-                    // Make animation faster as wind speed increases.
-                    // A lower duration value means a faster spin.
-                    // We'll cap the speed to prevent it from becoming a blur.
-                    const maxSpeedDuration = 0.5; // seconds for fastest spin
-                    const minSpeedDuration = 10;  // seconds for slowest spin
-                    const speedRange = 25; // m/s range to map to animation speed
-                    
-                    let duration = minSpeedDuration - (windSpeed / speedRange) * (minSpeedDuration - maxSpeedDuration);
-                    duration = Math.max(duration, maxSpeedDuration); // Clamp to max speed
+            function typeOutput(element, text) {
+                // To avoid multiple typing animations, just set the text directly.
+                // This makes the UI feel more responsive.
+                if (element.textContent !== text) {
+                     element.textContent = text;
+                }
+            }
 
-                    turbineBladesEl.style.animationDuration = `${duration}s`;
-                    turbineBladesEl.style.animationPlayState = 'running';
+            /**
+             * Controls the turbine blade animation state.
+             */
+            function setTurbineAnimation(state, windSpeed = 0) {
+                turbineBladesEl.classList.remove('spinning', 'feathered');
+
+                switch(state) {
+                    case 'stopped':
+                        turbineBladesEl.style.animationName = 'none';
+                        break;
+                    case 'spinning':
+                        turbineBladesEl.classList.add('spinning');
+                        const maxSpeedDuration = 0.5;
+                        const minSpeedDuration = 10;
+                        const speedRange = RATED_SPEED - CUT_IN_SPEED;
+                        let duration = minSpeedDuration - ((windSpeed - CUT_IN_SPEED) / speedRange) * (minSpeedDuration - maxSpeedDuration);
+                        duration = Math.max(duration, maxSpeedDuration);
+                        turbineBladesEl.style.animationDuration = `${duration}s`;
+                        break;
+                    case 'feathered':
+                        turbineBladesEl.style.animationName = 'none';
+                        turbineBladesEl.classList.add('feathered');
+                        break;
                 }
             }
         });
