@@ -196,27 +196,6 @@
             box-shadow: 0 0 5px var(--text-shadow-color);
         }
 
-        .compute-button {
-            background-color: var(--text-color);
-            color: var(--monitor-bg);
-            border: none;
-            padding: 10px 20px;
-            font-family: 'VT323', monospace;
-            font-size: 1.4rem;
-            cursor: pointer;
-            margin-top: 10px;
-            display: block;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 0 10px var(--text-shadow-color);
-        }
-        .compute-button:active {
-            transform: scale(0.98);
-            background-color: var(--monitor-bg);
-            color: var(--text-color);
-            border: 2px solid var(--text-color);
-        }
-
         .output-group h3 {
             margin-top: 0;
         }
@@ -259,9 +238,6 @@
             animation-name: none;
             animation-timing-function: linear;
             animation-iteration-count: infinite;
-        }
-        .turbine-blades.spinning {
-             animation-name: spin;
         }
         .turbine-blades.feathered .blade {
             transform: rotate(90deg) scaleY(1.2); /* Makes blades look 'turned' */
@@ -310,7 +286,7 @@
             .input-group input, .input-group select, .input-group .slider-container {
                 font-size: 1.2rem;
             }
-            .compute-button, #power-output {
+            #power-output {
                 font-size: 1.3rem;
             }
             .credit-line {
@@ -328,7 +304,7 @@
             <div id="boot-sequence"></div>
 
             <div id="app-ui" class="hidden">
-                <p>> WTG POWER COMPUTATION INTERFACE v3.0</p>
+                <p>> WTG POWER COMPUTATION INTERFACE v3.2</p>
                 <p>> READY.</p>
                 <div class="app-grid">
                     <div class="input-group">
@@ -411,7 +387,6 @@
                              <input type="range" min="0" max="0.593" value="0.45" step="0.001" class="slider" id="power-coeff">
                         </div>
 
-                        <button class="compute-button" id="compute-btn">UPDATE SYSTEM</button>
                     </div>
 
                     <div class="output-container">
@@ -455,14 +430,13 @@
             const windSpeedInput = document.getElementById('wind-speed');
             const powerCoeffSlider = document.getElementById('power-coeff');
             const cpValueSpan = document.getElementById('cp-value');
-            const computeBtn = document.getElementById('compute-btn');
             const powerOutputEl = document.getElementById('power-output');
             const turbineBladesEl = document.getElementById('turbine-blades');
             const opStatusEl = document.getElementById('turbine-op-status');
 
             // --- Constants for Turbine Operation ---
             const CUT_IN_SPEED = 3.5; // m/s
-            const RATED_SPEED = 14.0; // m/s - Wind speed where rated power is typically reached
+            const RATED_SPEED = 14.0; // m/s - Typical wind speed where rated power is reached
             const CUT_OUT_SPEED = 25.0; // m/s
 
             // --- Boot Sequence Logic ---
@@ -472,7 +446,7 @@
                 'CPU: ZILOG Z80 @ 4MHz... OK',
                 'LOADING WTG_DOS.SYS...',
                 'SYSTEM READY.',
-                'LOADING POWER CONSOLE v3.0...',
+                'LOADING POWER CONSOLE v3.2...',
                 ''
             ];
 
@@ -501,7 +475,6 @@
                         bootSequenceEl.classList.add('hidden');
                         appUiEl.classList.remove('hidden');
                         initializeInputs();
-                        updateSystemState(); 
                     }, 500);
                 }
             }
@@ -511,11 +484,15 @@
             // --- Application Logic ---
             
             function initializeInputs() {
-                handleAltitudeChange();
-                handleRotorModelChange();
+                onInputChange();
             }
 
-            function handleAltitudeChange() {
+            /**
+             * A single function to call before running the main state update.
+             * Ensures all dependent input values are synchronized.
+             */
+            function onInputChange() {
+                // Update air density based on altitude
                 const h = parseFloat(altitudeInput.value);
                 if (!isNaN(h) && altitudeInput.value.trim() !== '') {
                     const density = 1.225 * Math.pow((1 - 0.0000225577 * h), 5.25588);
@@ -524,31 +501,35 @@
                 } else {
                     airDensityInput.disabled = false;
                 }
-            }
 
-            function handleRotorModelChange() {
+                // Update rotor area based on model selection
                 const selectedOption = rotorModelSelect.options[rotorModelSelect.selectedIndex];
                 const area = selectedOption.value;
-
                 if (area === 'custom') {
                     rotorAreaInput.disabled = false;
-                    rotorAreaInput.focus();
                 } else {
                     rotorAreaInput.value = area;
                     rotorAreaInput.disabled = true;
                 }
+                
+                // Update Cp display text
+                cpValueSpan.textContent = parseFloat(powerCoeffSlider.value).toFixed(3);
+                
+                // Run the main calculation and UI update
                 updateSystemState();
             }
-            
-            altitudeInput.addEventListener('input', updateSystemState);
-            rotorModelSelect.addEventListener('change', handleRotorModelChange);
-            powerCoeffSlider.addEventListener('input', () => {
-                cpValueSpan.textContent = parseFloat(powerCoeffSlider.value).toFixed(3);
-                updateSystemState();
-            });
-            computeBtn.addEventListener('click', updateSystemState);
-            windSpeedInput.addEventListener('input', updateSystemState);
 
+            // Assign the master update function to all relevant input events
+            altitudeInput.addEventListener('input', onInputChange);
+            rotorModelSelect.addEventListener('change', onInputChange);
+            powerCoeffSlider.addEventListener('input', onInputChange);
+            windSpeedInput.addEventListener('input', onInputChange);
+            airDensityInput.addEventListener('input', onInputChange); // For custom density
+            rotorAreaInput.addEventListener('input', onInputChange); // For custom area
+
+            /**
+             * Main function to calculate power and update the entire UI based on current input values.
+             */
             function updateSystemState() {
                 const rho = parseFloat(airDensityInput.value);
                 const A = parseFloat(rotorAreaInput.value);
@@ -588,7 +569,7 @@
                     const displayCp = Math.min(effectiveCp, 0.593);
                     if (!isNaN(displayCp)) {
                         powerCoeffSlider.value = displayCp;
-                        cpValueSpan.textContent = displayCp.toFixed(3);
+                        cpValueSpan.textContent = displayCp.toFixed(3); // Update display for simulated Cp
                     }
                     
                     setTurbineAnimation('spinning', RATED_SPEED);
@@ -619,15 +600,19 @@
                 }
             }
 
+            /**
+             * Controls the turbine blade animation state.
+             * This version directly manipulates the animationName property to avoid style precedence issues.
+             */
             function setTurbineAnimation(state, windSpeed = 0) {
-                turbineBladesEl.classList.remove('spinning', 'feathered');
+                turbineBladesEl.classList.remove('feathered');
 
                 switch(state) {
                     case 'stopped':
                         turbineBladesEl.style.animationName = 'none';
                         break;
                     case 'spinning':
-                        turbineBladesEl.classList.add('spinning');
+                        turbineBladesEl.style.animationName = 'spin';
                         const maxSpeedDuration = 0.5;
                         const minSpeedDuration = 10;
                         const speedRange = RATED_SPEED - CUT_IN_SPEED;
