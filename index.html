@@ -328,7 +328,7 @@
             <div id="boot-sequence"></div>
 
             <div id="app-ui" class="hidden">
-                <p>> WTG POWER COMPUTATION INTERFACE v2.7</p>
+                <p>> WTG POWER COMPUTATION INTERFACE v3.0</p>
                 <p>> READY.</p>
                 <div class="app-grid">
                     <div class="input-group">
@@ -343,59 +343,59 @@
                         <label for="rotor-model-select">ROTOR MODEL:</label>
                         <select id="rotor-model-select">
                             <optgroup label="-- Vestas (Denmark) --">
-                                <option value="9852">Vestas V112 (3.45MW)</option>
-                                <option value="14527">Vestas V136 (4.2MW)</option>
-                                <option value="17671">Vestas V150 (4.2MW)</option>
-                                <option value="20106">Vestas V162 (6.2MW)</option>
-                                <option value="43743">Vestas V236 (15.0MW Offshore)</option>
+                                <option value="9852" data-rated-power="3450000">Vestas V112 (3.45MW)</option>
+                                <option value="14527" data-rated-power="4200000">Vestas V136 (4.2MW)</option>
+                                <option value="17671" data-rated-power="4200000">Vestas V150 (4.2MW)</option>
+                                <option value="20106" data-rated-power="6200000">Vestas V162 (6.2MW)</option>
+                                <option value="43743" data-rated-power="15000000">Vestas V236 (15.0MW Offshore)</option>
                             </optgroup>
                             <optgroup label="-- Siemens Gamesa (Spain/Germany) --">
-                                <option value="12469">SGRE SG 4.5-125</option>
-                                <option value="16513">SGRE SG 5.8-145</option>
-                                <option value="18869">SGRE SG 6.6-155</option>
-                                <option value="22698">SGRE SG 8.0-170</option>
-                                <option value="38707">SGRE SG 14-222 (Offshore)</option>
-                                <option value="43743">SGRE SG 14-236 (Offshore)</option>
-                                <option value="6424">Gamesa G90 (2.0MW)</option>
+                                <option value="12469" data-rated-power="4500000">SGRE SG 4.5-125</option>
+                                <option value="16513" data-rated-power="5800000">SGRE SG 5.8-145</option>
+                                <option value="18869" data-rated-power="6600000">SGRE SG 6.6-155</option>
+                                <option value="22698" data-rated-power="8000000">SGRE SG 8.0-170</option>
+                                <option value="38707" data-rated-power="14000000">SGRE SG 14-222 (Offshore)</option>
+                                <option value="43743" data-rated-power="14000000">SGRE SG 14-236 (Offshore)</option>
+                                <option value="6424" data-rated-power="2000000">Gamesa G90 (2.0MW)</option>
                             </optgroup>
                              <optgroup label="-- GE Vernova (USA) --">
-                                <option value="12868">GE 4.8-129</option>
-                                <option value="19607">GE Cypress 5.5-158</option>
-                                <option value="57226">GE Haliade-X 14.7-250 (Offshore)</option>
+                                <option value="12868" data-rated-power="4800000">GE 4.8-129</option>
+                                <option value="19607" data-rated-power="5500000">GE Cypress 5.5-158</option>
+                                <option value="57226" data-rated-power="14700000">GE Haliade-X 14.7-250 (Offshore)</option>
                             </optgroup>
                             <optgroup label="-- Goldwind (China) --">
-                                <option value="5320">Goldwind GW82 (1.5MW)</option>
-                                <option value="14314">Goldwind GW136 (3.4MW)</option>
-                                <option value="21382">Goldwind GW165 (6.0MW)</option>
-                                <option value="24053">Goldwind GW175 (8.0MW)</option>
+                                <option value="5320" data-rated-power="1500000">Goldwind GW82 (1.5MW)</option>
+                                <option value="14314" data-rated-power="3400000">Goldwind GW136 (3.4MW)</option>
+                                <option value="21382" data-rated-power="6000000">Goldwind GW165 (6.0MW)</option>
+                                <option value="24053" data-rated-power="8000000">Goldwind GW175 (8.0MW)</option>
                             </optgroup>
                             <optgroup label="-- Nordex (Germany) --">
-                                <option value="13069">Nordex N131 (3.9MW)</option>
-                                <option value="17460">Nordex N149 (5.X MW)</option>
-                                <option value="21124">Nordex N163 (6.X MW)</option>
+                                <option value="13069" data-rated-power="3900000">Nordex N131 (3.9MW)</option>
+                                <option value="17460" data-rated-power="5700000">Nordex N149 (5.X MW)</option>
+                                <option value="21124" data-rated-power="6800000">Nordex N163 (6.X MW)</option>
                             </optgroup>
                              <optgroup label="-- Enercon (Germany) --">
-                                <option value="7543">Enercon E-101 (3.05MW)</option>
-                                <option value="12668">Enercon E-126 (7.58MW)</option>
-                                <option value="14957">Enercon E-138 (4.2MW)</option>
-                                <option value="20358">Enercon E-160 (5.5MW)</option>
+                                <option value="7543" data-rated-power="3050000">Enercon E-101 (3.05MW)</option>
+                                <option value="12668" data-rated-power="7580000">Enercon E-126 (7.58MW)</option>
+                                <option value="14957" data-rated-power="4200000">Enercon E-138 (4.2MW)</option>
+                                <option value="20358" data-rated-power="5500000">Enercon E-160 (5.5MW)</option>
                             </optgroup>
                             <optgroup label="-- Envision (China) --">
-                                <option value="18146">Envision EN156 (4.5MW)</option>
-                                <option value="23235">Envision EN171 (6.5MW)</option>
+                                <option value="18146" data-rated-power="4500000">Envision EN156 (4.5MW)</option>
+                                <option value="23235" data-rated-power="6500000">Envision EN171 (6.5MW)</option>
                             </optgroup>
                             <optgroup label="-- Mingyang Smart Energy (China) --">
-                                <option value="22902">Mingyang MySE 7.25-171</option>
-                                <option value="45239">Mingyang MySE 14-236 (Offshore)</option>
-                                <option value="53093">Mingyang MySE 16-260 (Offshore)</option>
+                                <option value="22902" data-rated-power="7250000">Mingyang MySE 7.25-171</option>
+                                <option value="45239" data-rated-power="14000000">Mingyang MySE 14-236 (Offshore)</option>
+                                <option value="53093" data-rated-power="16000000">Mingyang MySE 16-260 (Offshore)</option>
                             </optgroup>
                             <optgroup label="-- Other Notable Manufacturers --">
-                                <option value="21642">Shanghai Electric SEW11.0-208</option>
-                                <option value="11690">Suzlon S120 (2.1MW)</option>
-                                <option value="20096">Windey WD160 (5.0MW)</option>
-                                <option value="22698">Sany SE-17260 (6.0MW)</option>
-                                <option value="36305">CSSC Haizhuang H210 (10MW)</option>
-                                <option value="18629">United Power UP5500-155</option>
+                                <option value="21642" data-rated-power="11000000">Shanghai Electric SEW11.0-208</option>
+                                <option value="11690" data-rated-power="2100000">Suzlon S120 (2.1MW)</option>
+                                <option value="20096" data-rated-power="5000000">Windey WD160 (5.0MW)</option>
+                                <option value="22698" data-rated-power="6000000">Sany SE-17260 (6.0MW)</option>
+                                <option value="36305" data-rated-power="10000000">CSSC Haizhuang H210 (10MW)</option>
+                                <option value="18629" data-rated-power="5500000">United Power UP5500-155</option>
                             </optgroup>
                             <option value="custom">-- Custom Area --</option>
                         </select>
@@ -406,7 +406,7 @@
                         <label for="wind-speed">WIND SPEED (v, m/s):</label>
                         <input type="number" id="wind-speed" value="12" step="0.5">
                         
-                        <label for="power-coeff">POWER COEFF (Cp): <span id="cp-value">0.45</span><br>(Typical: 0.35-0.50)</label>
+                        <label for="power-coeff">POWER COEFF (Cp): <span id="cp-value">0.450</span><br>(Typical: 0.35-0.50)</label>
                         <div class="slider-container">
                              <input type="range" min="0" max="0.593" value="0.45" step="0.001" class="slider" id="power-coeff">
                         </div>
@@ -462,7 +462,7 @@
 
             // --- Constants for Turbine Operation ---
             const CUT_IN_SPEED = 3.5; // m/s
-            const RATED_SPEED = 14.0; // m/s
+            const RATED_SPEED = 14.0; // m/s - Wind speed where rated power is typically reached
             const CUT_OUT_SPEED = 25.0; // m/s
 
             // --- Boot Sequence Logic ---
@@ -472,7 +472,7 @@
                 'CPU: ZILOG Z80 @ 4MHz... OK',
                 'LOADING WTG_DOS.SYS...',
                 'SYSTEM READY.',
-                'LOADING POWER CONSOLE v2.7...',
+                'LOADING POWER CONSOLE v3.0...',
                 ''
             ];
 
@@ -527,32 +527,37 @@
             }
 
             function handleRotorModelChange() {
-                const selectedValue = rotorModelSelect.value;
-                if (selectedValue === 'custom') {
+                const selectedOption = rotorModelSelect.options[rotorModelSelect.selectedIndex];
+                const area = selectedOption.value;
+
+                if (area === 'custom') {
                     rotorAreaInput.disabled = false;
                     rotorAreaInput.focus();
                 } else {
-                    rotorAreaInput.value = selectedValue;
+                    rotorAreaInput.value = area;
                     rotorAreaInput.disabled = true;
                 }
+                updateSystemState();
             }
             
-            altitudeInput.addEventListener('input', handleAltitudeChange);
+            altitudeInput.addEventListener('input', updateSystemState);
             rotorModelSelect.addEventListener('change', handleRotorModelChange);
             powerCoeffSlider.addEventListener('input', () => {
                 cpValueSpan.textContent = parseFloat(powerCoeffSlider.value).toFixed(3);
+                updateSystemState();
             });
             computeBtn.addEventListener('click', updateSystemState);
             windSpeedInput.addEventListener('input', updateSystemState);
 
-            /**
-             * Main function to calculate power and update the entire UI based on wind speed.
-             */
             function updateSystemState() {
                 const rho = parseFloat(airDensityInput.value);
                 const A = parseFloat(rotorAreaInput.value);
                 const v = parseFloat(windSpeedInput.value);
-                const Cp = parseFloat(powerCoeffSlider.value);
+                let Cp = parseFloat(powerCoeffSlider.value);
+
+                const selectedOption = rotorModelSelect.options[rotorModelSelect.selectedIndex];
+                const ratedPowerAttr = selectedOption.getAttribute('data-rated-power');
+                const ratedPowerInWatts = ratedPowerAttr ? parseFloat(ratedPowerAttr) : null;
 
                 if (isNaN(rho) || isNaN(A) || isNaN(v) || isNaN(Cp) || rho <= 0 || A <= 0 || v < 0) {
                     typeOutput(powerOutputEl, 'ERROR');
@@ -560,37 +565,39 @@
                     return;
                 }
 
-                // State 1: Wind speed is below cut-in
+                const potentialPower = 0.5 * rho * A * Math.pow(v, 3) * Cp;
+
                 if (v < CUT_IN_SPEED) {
                     powerCoeffSlider.disabled = false;
-                    typeOutput(powerOutputEl, '0.00 kW');
+                    displayFormattedPower(0);
                     typeOutput(opStatusEl, 'IDLE: BELOW CUT-IN SPEED');
                     setTurbineAnimation('stopped');
                 } 
-                // State 2: Normal operation
-                else if (v >= CUT_IN_SPEED && v < RATED_SPEED) {
-                    powerCoeffSlider.disabled = false;
-                    const powerInWatts = 0.5 * rho * A * Math.pow(v, 3) * Cp;
-                    displayFormattedPower(powerInWatts);
-                    typeOutput(opStatusEl, 'OPERATING NORMALLY');
-                    setTurbineAnimation('spinning', v);
-                }
-                // State 3: Rated power operation (blade pitching)
-                else if (v >= RATED_SPEED && v <= CUT_OUT_SPEED) {
+                else if (v > CUT_OUT_SPEED) {
                     powerCoeffSlider.disabled = true;
-                    // Power is capped at the level of the RATED_SPEED
-                    const ratedPowerInWatts = 0.5 * rho * A * Math.pow(RATED_SPEED, 3) * Cp;
-                    displayFormattedPower(ratedPowerInWatts);
-                    typeOutput(opStatusEl, 'REGULATING POWER (PITCHING)');
-                    // Spin at a constant high speed
-                    setTurbineAnimation('spinning', RATED_SPEED);
-                }
-                // State 4: Wind speed exceeds cut-out
-                else { // v > CUT_OUT_SPEED
-                    powerCoeffSlider.disabled = true;
-                    typeOutput(powerOutputEl, '0.00 kW');
+                    displayFormattedPower(0);
                     typeOutput(opStatusEl, 'SHUTDOWN: HIGH WIND SPEED');
                     setTurbineAnimation('feathered');
+                }
+                else if (ratedPowerInWatts && potentialPower > ratedPowerInWatts && v <= CUT_OUT_SPEED) {
+                    powerCoeffSlider.disabled = true;
+                    displayFormattedPower(ratedPowerInWatts);
+                    typeOutput(opStatusEl, 'REGULATING POWER (PITCHING)');
+                    
+                    const effectiveCp = ratedPowerInWatts / (0.5 * rho * A * Math.pow(v, 3));
+                    const displayCp = Math.min(effectiveCp, 0.593);
+                    if (!isNaN(displayCp)) {
+                        powerCoeffSlider.value = displayCp;
+                        cpValueSpan.textContent = displayCp.toFixed(3);
+                    }
+                    
+                    setTurbineAnimation('spinning', RATED_SPEED);
+                }
+                else {
+                    powerCoeffSlider.disabled = false;
+                    displayFormattedPower(potentialPower);
+                    typeOutput(opStatusEl, 'OPERATING NORMALLY');
+                    setTurbineAnimation('spinning', v);
                 }
             }
             
@@ -606,20 +613,12 @@
                 typeOutput(powerOutputEl, outputString);
             }
 
-            /**
-             * Simulates typing for a given element.
-             */
             function typeOutput(element, text) {
-                // To avoid multiple typing animations, just set the text directly.
-                // This makes the UI feel more responsive.
                 if (element.textContent !== text) {
                      element.textContent = text;
                 }
             }
 
-            /**
-             * Controls the turbine blade animation state.
-             */
             function setTurbineAnimation(state, windSpeed = 0) {
                 turbineBladesEl.classList.remove('spinning', 'feathered');
 
