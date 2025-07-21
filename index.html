@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WTG Power Console</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <style>
+        /* * CSS for the 1970s retro computer terminal UI.
+         * It includes styles for the CRT screen effect, scanlines,
+         * text glow, and retro-styled UI components.
+         */
+        :root {
+            --monitor-bg: #0a0e0a;
+            --text-color: #33ff33;
+            --text-shadow-color: rgba(51, 255, 51, 0.4);
+            --scanline-color: rgba(0, 0, 0, 0.3);
+            --bezel-color: #2c2c2c;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a;
+            font-family: 'VT323', monospace;
+            color: var(--text-color);
+            overflow: hidden;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .monitor {
+            width: 95%;
+            max-width: 900px;
+            height: 90vh;
+            max-height: 650px;
+            background: var(--monitor-bg);
+            border: 20px solid var(--bezel-color);
+            border-radius: 25px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.7), inset 0 0 20px rgba(0,0,0,0.8);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* CRT screen glow and scanline effect */
+        .monitor::before {
+            content: ' ';
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 3px, 5px 100%;
+            pointer-events: none;
+            animation: scanline 15s linear infinite;
+        }
+        
+        @keyframes scanline {
+           from { background-position: 0 0; }
+           to { background-position: 0 100vh; }
+        }
+
+        .content {
+            width: 100%;
+            height: 100%;
+            text-shadow: 0 0 5px var(--text-shadow-color);
+            font-size: 1.5rem;
+            line-height: 1.6rem;
+            overflow-y: auto;
+            /* Custom scrollbar for the retro feel */
+            scrollbar-width: thin;
+            scrollbar-color: var(--text-color) var(--monitor-bg);
+        }
+
+        .content::-webkit-scrollbar {
+            width: 10px;
+        }
+        .content::-webkit-scrollbar-track {
+            background: var(--monitor-bg);
+        }
+        .content::-webkit-scrollbar-thumb {
+            background-color: var(--text-color);
+            border-radius: 0;
+            border: 2px solid var(--monitor-bg);
+        }
+
+        /* Boot-up sequence styling */
+        #boot-sequence {
+            white-space: pre-wrap;
+        }
+
+        .hidden {
+            display: none;
+        }
+        
+        .cursor {
+            animation: blink 1s step-end infinite;
+            display: inline-block;
+            width: 10px;
+            height: 1.5rem;
+            background: var(--text-color);
+            box-shadow: 0 0 5px var(--text-shadow-color);
+        }
+        
+        @keyframes blink {
+            from, to { background: transparent; }
+            50% { background: var(--text-color); }
+        }
+
+        /* Main application UI styles */
+        .app-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .input-group, .output-group, .turbine-visual-group {
+            border: 2px solid var(--text-color);
+            padding: 15px;
+            box-shadow: inset 0 0 8px var(--text-shadow-color);
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .input-group input, .input-group select, .input-group .slider-container {
+            width: calc(100% - 10px);
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--text-color);
+            color: var(--text-color);
+            font-family: 'VT323', monospace;
+            font-size: 1.5rem;
+            padding: 5px;
+            margin-bottom: 15px;
+            text-shadow: 0 0 5px var(--text-shadow-color);
+        }
+
+        .input-group select {
+             background-color: var(--monitor-bg);
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-bottom-color: #ffcc00;
+        }
+        
+        .input-group input:disabled {
+            color: rgba(51, 255, 51, 0.5);
+            border-bottom-style: dashed;
+        }
+
+        /* Slider styles */
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 5px;
+            background: var(--text-color);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+            cursor: pointer;
+        }
+        .slider:hover { opacity: 1; }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--text-color);
+            border: 2px solid var(--monitor-bg);
+            box-shadow: 0 0 5px var(--text-shadow-color);
+        }
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: var(--text-color);
+            border: 2px solid var(--monitor-bg);
+            box-shadow: 0 0 5px var(--text-shadow-color);
+        }
+
+        .compute-button {
+            background-color: var(--text-color);
+            color: var(--monitor-bg);
+            border: none;
+            padding: 10px 20px;
+            font-family: 'VT323', monospace;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-top: 10px;
+            display: block;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 0 10px var(--text-shadow-color);
+        }
+        .compute-button:active {
+            transform: scale(0.98);
+            background-color: var(--monitor-bg);
+            color: var(--text-color);
+            border: 2px solid var(--text-color);
+        }
+
+        .output-group h3 {
+            margin-top: 0;
+        }
+        #power-output {
+            font-size: 2.5rem;
+            color: #ffcc00;
+            text-shadow: 0 0 8px rgba(255, 204, 0, 0.7);
+            word-wrap: break-word;
+        }
+
+        /* Turbine animation styles */
+        .turbine-visual {
+            width: 100px;
+            height: 100px;
+            margin: 20px auto;
+            position: relative;
+        }
+        .turbine-mast {
+            width: 10px;
+            height: 80px;
+            background: var(--text-color);
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .turbine-blades {
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            top: -20px;
+            left: 0;
+            animation-duration: 5s; /* Default speed */
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+        }
+        .blade {
+            position: absolute;
+            width: 10px;
+            height: 45px;
+            background: var(--text-color);
+            left: 45px;
+            top: 5px;
+            transform-origin: 50% 100%;
+        }
+        .blade.b1 { transform: rotate(0deg); }
+        .blade.b2 { transform: rotate(120deg); }
+        .blade.b3 { transform: rotate(240deg); }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .credit-line {
+            font-size: 1rem;
+            text-align: center;
+            color: rgba(51, 255, 51, 0.7);
+            margin-top: 20px;
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 768px) {
+            .app-grid {
+                grid-template-columns: 1fr;
+            }
+            .monitor {
+                border-width: 10px;
+                padding: 10px;
+                height: 95vh;
+            }
+            .content {
+                font-size: 1.2rem;
+                line-height: 1.3rem;
+            }
+            .input-group input, .input-group select, .input-group .slider-container {
+                font-size: 1.2rem;
+            }
+            .compute-button, #power-output {
+                font-size: 1.3rem;
+            }
+            .credit-line {
+                font-size: 0.9rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="monitor">
+        <div class="content" id="content-area">
+            
+            <!-- Boot-up sequence will be injected here by JS -->
+            <div id="boot-sequence"></div>
+
+            <!-- Main application UI, initially hidden -->
+            <div id="app-ui" class="hidden">
+                <p>> WTG POWER COMPUTATION INTERFACE v2.5</p>
+                <p>> READY.</p>
+                <div class="app-grid">
+                    <div class="input-group">
+                        <h3>// INPUT PARAMETERS</h3>
+                        
+                        <label for="altitude">ALTITUDE (h, meters):</label>
+                        <input type="number" id="altitude" value="0" step="100">
+
+                        <label for="air-density">AIR DENSITY (ρ, kg/m³):</label>
+                        <input type="number" id="air-density" value="1.225" step="0.001">
+                        
+                        <label for="rotor-model-select">ROTOR MODEL:</label>
+                        <select id="rotor-model-select">
+                            <optgroup label="-- Vestas --">
+                                <option value="7854">Vestas V100 (2.75MW)</option>
+                                <option value="17671">Vestas V150 (4.2MW)</option>
+                                <option value="23235">Vestas V172 (7.2MW)</option>
+                            </optgroup>
+                            <optgroup label="-- Siemens Gamesa --">
+                                <option value="18869">SGRE SG 6.6-155</option>
+                                <option value="38707">SGRE SG 14-222 (Offshore)</option>
+                                <option value="43743">SGRE SG 14-236 (Offshore)</option>
+                            </optgroup>
+                            <optgroup label="-- Goldwind (China) --">
+                                <option value="5320">Goldwind GW82 (1.5MW)</option>
+                                <option value="21382">Goldwind GW165 (6.0MW)</option>
+                                <option value="24053">Goldwind GW175 (8.0MW)</option>
+                            </optgroup>
+                            <option value="custom">-- Custom Area --</option>
+                        </select>
+
+                        <label for="rotor-area">ROTOR AREA (A, m²):</label>
+                        <input type="number" id="rotor-area" value="7854">
+
+                        <label for="wind-speed">WIND SPEED (v, m/s):</label>
+                        <input type="number" id="wind-speed" value="12">
+                        
+                        <label for="power-coeff">POWER COEFF (Cp): <span id="cp-value">0.45</span><br>(Typical: 0.35-0.50)</label>
+                        <div class="slider-container">
+                             <input type="range" min="0" max="0.593" value="0.45" step="0.001" class="slider" id="power-coeff">
+                        </div>
+
+                        <button class="compute-button" id="compute-btn">COMPUTE POWER</button>
+                    </div>
+
+                    <div class="output-container">
+                        <div class="output-group">
+                            <h3>// SYSTEM OUTPUT</h3>
+                            <p>> POWER (P):</p>
+                            <div id="power-output">_</div>
+                        </div>
+                        <div class="turbine-visual-group">
+                             <h3>// TURBINE STATUS</h3>
+                             <div class="turbine-visual">
+                                 <div class="turbine-mast"></div>
+                                 <div class="turbine-blades" id="turbine-blades">
+                                     <div class="blade b1"></div>
+                                     <div class="blade b2"></div>
+                                     <div class="blade b3"></div>
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+                 <p class="credit-line">Developed by Franz Xyrlo Tobias, PEE</p>
+                 <p>> <span id="prompt-cursor" class="cursor"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM Element References ---
+            const bootSequenceEl = document.getElementById('boot-sequence');
+            const appUiEl = document.getElementById('app-ui');
+            const contentArea = document.getElementById('content-area');
+
+            const altitudeInput = document.getElementById('altitude');
+            const airDensityInput = document.getElementById('air-density');
+            const rotorModelSelect = document.getElementById('rotor-model-select');
+            const rotorAreaInput = document.getElementById('rotor-area');
+            const windSpeedInput = document.getElementById('wind-speed');
+            const powerCoeffSlider = document.getElementById('power-coeff');
+            const cpValueSpan = document.getElementById('cp-value');
+            const computeBtn = document.getElementById('compute-btn');
+            const powerOutputEl = document.getElementById('power-output');
+            const turbineBladesEl = document.getElementById('turbine-blades');
+
+            // --- Boot Sequence Logic ---
+            const bootLines = [
+                'BIOS v1.7.3 INITIALIZING...',
+                'MEMORY CHECK: 64KB RAM... OK',
+                'CPU: ZILOG Z80 @ 4MHz... OK',
+                'LOADING WTG_DOS.SYS...',
+                'SYSTEM READY.',
+                'LOADING POWER CONSOLE v2.5...',
+                ''
+            ];
+
+            let lineIndex = 0;
+            
+            function typeBootLine() {
+                if (lineIndex < bootLines.length) {
+                    const line = bootLines[lineIndex];
+                    let charIndex = 0;
+                    const p = document.createElement('p');
+                    if (lineIndex === 0) {
+                        p.innerHTML = '<span class="cursor"></span>';
+                    }
+                    bootSequenceEl.appendChild(p);
+
+                    const typingInterval = setInterval(() => {
+                        if (charIndex < line.length) {
+                            p.innerHTML = line.substring(0, charIndex + 1) + '<span class="cursor"></span>';
+                            charIndex++;
+                            contentArea.scrollTop = contentArea.scrollHeight;
+                        } else {
+                            clearInterval(typingInterval);
+                            p.innerHTML = line; // Remove cursor at end of line
+                            lineIndex++;
+                            setTimeout(typeBootLine, Math.random() * 200 + 50);
+                        }
+                    }, 30);
+                } else {
+                    // Boot sequence finished, show the main app
+                    setTimeout(() => {
+                        bootSequenceEl.classList.add('hidden');
+                        appUiEl.classList.remove('hidden');
+                        initializeInputs();
+                        startTurbineAnimation(parseFloat(windSpeedInput.value) || 0);
+                    }, 500);
+                }
+            }
+
+            // Start the boot sequence
+            typeBootLine();
+
+
+            // --- Application Logic ---
+            
+            /**
+             * Initializes the state of the inputs based on default values.
+             */
+            function initializeInputs() {
+                handleAltitudeChange();
+                handleRotorModelChange();
+            }
+
+            /**
+             * Updates air density based on altitude.
+             * Uses a simplified formula from the U.S. Standard Atmosphere model.
+             */
+            function handleAltitudeChange() {
+                const h = parseFloat(altitudeInput.value);
+
+                if (!isNaN(h) && altitudeInput.value.trim() !== '') {
+                    // Simplified barometric formula for density calculation
+                    const density = 1.225 * Math.pow((1 - 0.0000225577 * h), 5.25588);
+                    airDensityInput.value = density.toFixed(4);
+                    airDensityInput.disabled = true;
+                } else {
+                    airDensityInput.disabled = false;
+                }
+            }
+
+            /**
+             * Handles changes to the rotor model selection dropdown.
+             */
+            function handleRotorModelChange() {
+                const selectedValue = rotorModelSelect.value;
+                if (selectedValue === 'custom') {
+                    rotorAreaInput.value = '';
+                    rotorAreaInput.disabled = false;
+                    rotorAreaInput.focus();
+                } else {
+                    rotorAreaInput.value = selectedValue;
+                    rotorAreaInput.disabled = true;
+                }
+            }
+            
+            altitudeInput.addEventListener('input', handleAltitudeChange);
+            rotorModelSelect.addEventListener('change', handleRotorModelChange);
+
+            /**
+             * Updates the displayed value for the Power Coefficient slider.
+             */
+            powerCoeffSlider.addEventListener('input', () => {
+                cpValueSpan.textContent = parseFloat(powerCoeffSlider.value).toFixed(3);
+            });
+
+            /**
+             * Handles the main power calculation when the button is clicked.
+             */
+            computeBtn.addEventListener('click', () => {
+                // 1. Get values from inputs
+                const rho = parseFloat(airDensityInput.value); // Air Density (ρ)
+                const A = parseFloat(rotorAreaInput.value);     // Rotor Area (A)
+                const v = parseFloat(windSpeedInput.value);     // Wind Speed (v)
+                const Cp = parseFloat(powerCoeffSlider.value); // Power Coefficient (Cp)
+
+                // 2. Validate inputs
+                if (isNaN(rho) || isNaN(A) || isNaN(v) || isNaN(Cp) || rho <= 0 || A <= 0 || v < 0) {
+                    typeOutput('INVALID INPUT. CHECK PARAMETERS.');
+                    return;
+                }
+                
+                // 3. Calculate power using the formula: P = 0.5 * ρ * A * v^3 * Cp
+                const powerInWatts = 0.5 * rho * A * Math.pow(v, 3) * Cp;
+                
+                // 4. Format and display the output
+                let outputString;
+                if (powerInWatts >= 1000000) {
+                    const powerInMegawatts = powerInWatts / 1000000;
+                    outputString = `${powerInMegawatts.toFixed(2)} MW`;
+                } else {
+                    const powerInKilowatts = powerInWatts / 1000;
+                    outputString = `${powerInKilowatts.toFixed(2)} kW`;
+                }
+                
+                typeOutput(outputString);
+
+                // 5. Update turbine animation speed based on wind speed
+                startTurbineAnimation(v);
+            });
+
+            /**
+             * Simulates typing for the output display.
+             * @param {string} text - The text to be typed out.
+             */
+            function typeOutput(text) {
+                let charIndex = 0;
+                powerOutputEl.innerHTML = ''; // Clear previous output
+                const typingInterval = setInterval(() => {
+                    if (charIndex < text.length) {
+                        powerOutputEl.innerHTML = text.substring(0, charIndex + 1) + '<span class="cursor"></span>';
+                        charIndex++;
+                    } else {
+                        clearInterval(typingInterval);
+                        powerOutputEl.innerHTML = text; // Remove cursor at end
+                    }
+                }, 50);
+            }
+
+            /**
+             * Starts or adjusts the turbine blade animation.
+             * @param {number} windSpeed - The current wind speed in m/s.
+             */
+            function startTurbineAnimation(windSpeed) {
+                turbineBladesEl.style.animationName = 'spin';
+                if (windSpeed <= 0) {
+                    turbineBladesEl.style.animationPlayState = 'paused';
+                } else {
+                    // Make animation faster as wind speed increases.
+                    // A lower duration value means a faster spin.
+                    // We'll cap the speed to prevent it from becoming a blur.
+                    const maxSpeedDuration = 0.5; // seconds for fastest spin
+                    const minSpeedDuration = 10;  // seconds for slowest spin
+                    const speedRange = 25; // m/s range to map to animation speed
+                    
+                    let duration = minSpeedDuration - (windSpeed / speedRange) * (minSpeedDuration - maxSpeedDuration);
+                    duration = Math.max(duration, maxSpeedDuration); // Clamp to max speed
+
+                    turbineBladesEl.style.animationDuration = `${duration}s`;
+                    turbineBladesEl.style.animationPlayState = 'running';
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
